@@ -156,6 +156,17 @@
     "checksum": "278732b2f5ae801d5f9a303d8fc96d97f7bf153833aa058534a41ef028d76c86"
   },
   {
+    "name": "zftpd",
+    "filename": "zftpd_v1.4.0.elf",
+    "url": "https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/zftpd_v1.4.0.elf",
+    "source": "https://github.com/seregonwar/zftpd/releases",
+    "source_direct": "https://github.com/seregonwar/zftpd/releases/download/v1.4.0/zftpd-ps5-zhttp-v1.4.0.elf",
+    "description": "Zero-copy FTP/HTTP Server",
+    "last_update": "2026-03-11",
+    "version": "v1.4.0",
+    "checksum": "d882b33c6603d2f605ceb97aee3f229fac50d06082182a3a53eb7ce9b06d0e91"
+  },
+  {
     "name": "kstuff",
     "filename": "kstuff_v1.6.7.elf",
     "url": "https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/kstuff_v1.6.7.elf",
