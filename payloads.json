@@ -1,5 +1,17 @@
 [
   {
+    "name": "ShadowMountPlus",
+    "filename": "ShadowMountPlus_1.6beta14-fix1.elf",
+    "url": "https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/ShadowMountPlus_1.6beta14-fix1.elf",
+    "source": "https://github.com/drakmor/ShadowMountPlus/releases",
+    "source_direct": "https://github.com/drakmor/ShadowMountPlus/releases/download/1.6beta14-fix1/ShadowMountPlus_1.6beta14-fix1.zip",
+    "extract_file": "shadowmountplus.elf",
+    "description": "A fully automated, background 'Auto-Mounter' payload for Jailbroken PlayStation 5 consoles.",
+    "last_update": "2026-06-02",
+    "version": "1.6beta14-fix1",
+    "checksum": "f4e79bf2d859a70092b008b39c678447aaafc436d6cc54c025469e5429178171"
+  },
+  {
     "name": "PS5-Lapy-JB-Daemon",
     "filename": "PS5-Lapy-JB-Daemon_v1.2.elf",
     "url": "https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/PS5-Lapy-JB-Daemon_v1.2.elf",
@@ -9,18 +21,6 @@
     "last_update": "2026-06-01",
     "version": "v1.2",
     "checksum": "13559b858fc33cc7fa3dc89e10dccf139070d99ee5d378dd75c969293700799e"
-  },
-  {
-    "name": "ShadowMountPlus",
-    "filename": "ShadowMountPlus_1.6beta14.elf",
-    "url": "https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/ShadowMountPlus_1.6beta14.elf",
-    "source": "https://github.com/drakmor/ShadowMountPlus/releases",
-    "source_direct": "https://github.com/drakmor/ShadowMountPlus/releases/download/1.6beta14/ShadowMountPlus_1.6beta14.zip",
-    "extract_file": "shadowmountplus.elf",
-    "description": "A fully automated, background 'Auto-Mounter' payload for Jailbroken PlayStation 5 consoles.",
-    "last_update": "2026-06-01",
-    "version": "1.6beta14",
-    "checksum": "16355822450dd0e9cd645a688bafab4d70d296a50eff0b53664027ddc439d796"
   },
   {
     "name": "pldmgr",
@@ -160,11 +160,11 @@
     "filename": "zftpd_v1.4.0.elf",
     "url": "https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/zftpd_v1.4.0.elf",
     "source": "https://github.com/seregonwar/zftpd/releases",
-    "source_direct": "https://github.com/seregonwar/zftpd/releases/download/v1.4.0/zftpd-ps5-zhttp-v1.4.0.elf",
+    "source_direct": "https://github.com/seregonwar/zftpd/releases/download/v1.4.0/zftpd-ps5-v1.4.0.elf",
     "description": "Zero-copy FTP/HTTP Server",
     "last_update": "2026-03-11",
     "version": "v1.4.0",
-    "checksum": "d882b33c6603d2f605ceb97aee3f229fac50d06082182a3a53eb7ce9b06d0e91"
+    "checksum": "6d4559e0507ce4e6551e7c81af6bedb98863d28ff5694e76b3f7f94e38b82a96"
   },
   {
     "name": "kstuff",
