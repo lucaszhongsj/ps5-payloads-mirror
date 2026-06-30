@@ -179,6 +179,17 @@
     "checksum": "a1e99f2758aea98e78a37d1a1c2f79b08187acb35c7410eec4c8f4763162768f"
   },
   {
+    "name": "ps5-app-dumper",
+    "filename": "ps5-app-dumper_v1.10.elf",
+    "url": "https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/ps5-app-dumper_v1.10.elf",
+    "source": "https://github.com/EchoStretch/ps5-app-dumper/releases",
+    "source_direct": "https://github.com/EchoStretch/ps5-app-dumper/releases/download/v1.10/ps5-app-dumper.elf",
+    "description": "A small utility to dump PS5 application files from the console's pfsmnt to a connected USB storage device.",
+    "last_update": "2026-05-03",
+    "version": "v1.10",
+    "checksum": "95382a9e37987d8eb931cbe5db618e77d293099ef4314e3288d9899bd5ac5c00"
+  },
+  {
     "name": "BackPork",
     "filename": "BackPork_0.1.elf",
     "url": "https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/BackPork_0.1.elf",
