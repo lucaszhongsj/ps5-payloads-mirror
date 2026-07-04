@@ -1,5 +1,16 @@
 [
   {
+    "name": "kstuff-lite",
+    "filename": "kstuff-lite_v1.09.elf",
+    "url": "https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/kstuff-lite_v1.09.elf",
+    "source": "https://github.com/EchoStretch/kstuff-lite/releases",
+    "source_direct": "https://github.com/EchoStretch/kstuff-lite/releases/download/v1.09/kstuff.elf",
+    "description": "Lite version of kstuff",
+    "last_update": "2026-07-04",
+    "version": "v1.09",
+    "checksum": "ec5212794dc6e44ee8e70fd0549abec6d3dac8c3e03ddbeafd9f869ffe97d4e8"
+  },
+  {
     "name": "ps5-linux-loader",
     "filename": "ps5-linux-loader_v2.3.elf",
     "url": "https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/ps5-linux-loader_v2.3.elf",
@@ -9,17 +20,6 @@
     "last_update": "2026-07-01",
     "version": "v2.3",
     "checksum": "0723b5d5e09120861023e91780d9ec345a3aa2f32c8a17fdfb3a60a9e934e8a5"
-  },
-  {
-    "name": "kstuff-lite",
-    "filename": "kstuff-lite_v1.08.elf",
-    "url": "https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/kstuff-lite_v1.08.elf",
-    "source": "https://github.com/EchoStretch/kstuff-lite/releases",
-    "source_direct": "https://github.com/EchoStretch/kstuff-lite/releases/download/v1.08/kstuff.elf",
-    "description": "Lite version of kstuff",
-    "last_update": "2026-06-28",
-    "version": "v1.08",
-    "checksum": "17294fb95736b9871457c255c0fa2ce2fc2c0401f5cc5b26abd077393b018361"
   },
   {
     "name": "ShadowMountPlus",

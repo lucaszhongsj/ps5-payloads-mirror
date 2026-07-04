@@ -7,8 +7,8 @@ This repository contains an automated mirror of useful payloads for the PlayStat
 <!-- PAYLOADS_START -->
 | Payload | Version | Description | Last Updated | Source | Download |
 | --- | --- | --- | --- | --- | --- |
+| **kstuff-lite** | `v1.09` | Lite version of kstuff | `2026-07-04` | [Source](https://github.com/EchoStretch/kstuff-lite/releases) | [Download](https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/kstuff-lite_v1.09.elf) |
 | **ps5-linux-loader** | `v2.3` | Linux payload implementing HV exploits to run a custom bootloader | `2026-07-01` | [Source](https://github.com/ps5-linux/ps5-linux-loader/releases) | [Download](https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/ps5-linux-loader_v2.3.elf) |
-| **kstuff-lite** | `v1.08` | Lite version of kstuff | `2026-06-28` | [Source](https://github.com/EchoStretch/kstuff-lite/releases) | [Download](https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/kstuff-lite_v1.08.elf) |
 | **ShadowMountPlus** | `1.6beta16` | A fully automated, background 'Auto-Mounter' payload for Jailbroken PlayStation 5 consoles. | `2026-06-28` | [Source](https://github.com/drakmor/ShadowMountPlus/releases) | [Download](https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/ShadowMountPlus_1.6beta16.elf) |
 | **websrv** | `v0.33` | A simple web server that accepts connections on port 8080 | `2026-06-28` | [Source](https://github.com/ps5-payload-dev/websrv/releases) | [Download](https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/websrv_v0.33.elf) |
 | **shsrv** | `v0.19` | A simple telnet-like shell server for jailbroken PS5s that accepts connections on port 2323 | `2026-06-28` | [Source](https://github.com/ps5-payload-dev/shsrv/releases) | [Download](https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/shsrv_v0.19.elf) |
