@@ -232,5 +232,58 @@
     "last_update": "2025-12-25",
     "version": "2.5B",
     "checksum": "4845cac45095361b8983b14d6690622183b0dcfbf6d7fda16e161aa91ff0531e"
+  },
+  {
+    "name": "shadowmountplus",
+    "source": "https://github.com/drakmor/shadowMountPlus/releases",
+    "asset_pattern": "shadowmountplus",
+    "description": "Watches scan folders (/mnt/usb*, /mnt/ext*, /data/homebrew, /mnt/shadowmnt) AND /data/shadowmount/manual.lst for game folders and .ffpkg/.exfat/.ffpfs/.ffpfsc images, then auto-mounts (LVD/MD), stages sce_sys + appmeta + trophy data, and registers them on the home screen — no per-image command, it's fully autonomous. Newer builds add nested/compressed-PFS (.ffpfsc) containers, trophy-data copy, and a watched manual-install list. Includes fakelib (backports) overlay + per-game kstuff autopause. Needs kstuff-lite v1.07+ loaded first."
+  },
+  {
+    "name": "etahen",
+    "source": "https://github.com/LightningMods/etaHEN/releases",
+    "asset_pattern": "etaHEN",
+    "description": "Long-running homebrew enabler with toolbox features. Faster app jailbreak than the on-the-fly path; provides the HijackerCommand IPC many homebrew apps expect on :9028."
+  },
+  {
+    "name": "ezremote-dpi",
+    "source": "https://github.com/cy33hc/ps5-ezremote-dpi/releases",
+    "asset_pattern": "ezremote-dpi",
+    "description": "Long-lived loopback install daemon (127.0.0.1:9040). Owns Sony's PlayGo/AppInstUtil install state machine so installs don't evaporate when the calling process exits. Sonicloader and ezremote-client both use this as their primary install path. Once installed, ps5upload's install runner will offer a 'DPI' method that proxies to it (planned for follow-up)."
+  },
+  {
+    "name": "itemzflow",
+    "source": "https://github.com/LightningMods/Itemzflow/releases",
+    "asset_pattern": "itemzflow",
+    "description": "Full-screen native PS5 launcher for homebrew, fpkg games, and FTP browsing. Heavyweight (~50 MB) but the most polished launcher in the scene."
+  },
+  {
+    "name": "cheatrunner",
+    "source": "https://github.com/notmaj0r/CheatRunner/releases",
+    "description": "Loads and applies game cheats on the PS5. Send it like any other payload, then browse and toggle cheats for supported titles on the console."
+  },
+  {
+    "name": "lapyjb",
+    "source": "https://git.etawen.dev/voidwhisper/lapy-jb-daemon/releases",
+    "asset_pattern": "lapyjb",
+    "description": "Standalone PID-jailbreak daemon that handles app escalation directly. Apps that previously needed etaHEN's HijackerCommand IPC (Itemzflow, xplorer, anything using universalps5 PRX) just work with lapyjb running. Smaller, simpler than etaHEN — recommended over etaHEN if you only need the app-jb side."
+  },
+  {
+    "name": "np-fake-signin",
+    "source": "https://git.etawen.dev/earthonion/np-fake-signin/releases",
+    "asset_pattern": "np-fake-signin-ps5",
+    "description": "Headless payload that registers PS5 user slots directly via the system registry. Replaces having to sign into a real PSN account just to set up local users — handy for fresh jailbreaks, secondary accounts, or test profiles. One-shot ELF: send, runs, exits."
+  },
+  {
+    "name": "garlic-worker",
+    "source": "https://git.etawen.dev/earthonion/garlic-worker/releases",
+    "asset_pattern": "garlic-worker-ps5",
+    "description": "Background worker that drains the community save-decryption queue from garlicsaves.com. Handles both PS4 and PS5 saves natively. **Privacy notice**: connects to garlicsaves.com and processes other users' encrypted save files. Off by default — install + run manually if you want to contribute back to the community queue."
+  },
+  {
+    "name": "ghostpad",
+    "source": "https://github.com/StonedModder/Ghostpad/releases",
+    "asset_pattern": "ghostpad.elf",
+    "description": "Creates a virtual PS5 controller on the console and redirects input to it — useful for input automation, remote control, and accessibility setups. Send the payload to start it; pair it with the upstream's companion app for driving the virtual pad."
   }
 ]
