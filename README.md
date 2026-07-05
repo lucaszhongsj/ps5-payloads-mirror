@@ -34,7 +34,7 @@ Same repo under multiple aliases (e.g. `LightningMods/etaHEN` and `etaHEN/etaHEN
 
 - No binaries are hosted here. `url` points at the upstream release asset; download happens on the PS5 side.
 - Checksums come from the GitHub Release API `digest` field. Non-GitHub repos (e.g. Forgejo on `git.etawen.dev`) and assets without a published digest have an empty `checksum`.
-- `LightningMods/Itemzflow` is excluded — its releases ship no `.elf`/`.bin` asset.
+- `LightningMods/Itemzflow` is auto-skipped — its releases ship no `.elf`/`.bin` asset, so the aggregator finds no canonical asset to list.
 - Pre-release-only repos fall back to the most recent pre-release.
 - Repos are deduped by canonical `(owner, repo)` after redirect resolution (e.g. `LightningMods/etaHEN` folds into `etaHEN/etaHEN`).
 
