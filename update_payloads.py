@@ -1,18 +1,25 @@
 #!/usr/bin/env python3
 """Aggregate PS5 payload catalogue into payloads.json.
 
-Reads `sources.json` (curated upstream repo list), enriches it with the live
-`phantomptr/ps5upload` CATALOGUE when possible, queries each upstream repo's
-latest release, picks the canonical asset, and writes `payloads.json` in the
-ps5-payload-manager custom-repository schema.
+Three-layer composition, all read-only against upstream:
+  1. Discovery: `itsPLK/ps5-payloads-mirror/payloads.json` supplies the upstream
+     repo list (so new payloads added there appear here automatically).
+  2. Curation: `sources.json` overrides display name / description /
+     asset_pattern / extract_file for any repo, and can `exclude` repos we do
+     not want to republish. Entries here also act as a fallback seed if the
+     itsPLK discovery fetch fails.
+  3. Enrichment: `phantomptr/ps5upload` `CATALOGUE` provides longer
+     descriptions / display names where available.
 
-Behaviour notes:
-- No binaries are downloaded. Checksums come from the GitHub Release API
-  `digest` field (sha256:...). Forgejo/Gitea and missing-digest assets get an
-  empty checksum string.
-- `/releases/latest` is tried first; if it 404s (pre-release-only repo) we fall
-  back to the first element of `/releases`.
-- `name` key is emitted before `payloads` per the ps5-payload-manager spec.
+For each repo, the latest release is queried, the canonical asset is picked,
+and an entry in ps5-payload-manager custom-repository schema is emitted.
+
+Notes:
+- No binaries are downloaded. GitHub checksums come from the Release API
+  `digest` field. Forgejo / missing-digest assets get an empty checksum.
+- `/releases/latest` 404 → fall back to `/releases[0]` for pre-release-only repos.
+- Repos are deduped by canonical (host, owner, repo) after redirect resolution
+  (e.g. LightningMods/etaHEN folds into etaHEN/etaHEN).
 """
 
 import json
@@ -24,6 +31,9 @@ from pathlib import Path
 SOURCES_FILE = "sources.json"
 OUTPUT_FILE = "payloads.json"
 README_FILE = "README.md"
+ITSPLK_DISCOVERY_URL = (
+    "https://raw.githubusercontent.com/itsPLK/ps5-payloads-mirror/main/payloads.json"
+)
 PS5UPLOAD_CATALOGUE_URL = (
     "https://raw.githubusercontent.com/phantomptr/ps5upload/main/"
     "client/src-tauri/src/commands/payloads.rs"
@@ -32,14 +42,13 @@ CATALOGUE_NAME = "PS5 Payload Catalogue"
 
 
 # ─── HTTP helpers ──────────────────────────────────────────────────────
-def http_get(url: str, headers: dict | None = None, timeout: int = 30) -> str:
-    req = urllib.request.Request(url, headers=headers or {"User-Agent": "ps5-payload-catalogue/1.0"})
+def http_get(url: str, timeout: int = 30) -> str:
+    req = urllib.request.Request(url, headers={"User-Agent": "ps5-payloads-atlas/1.0"})
     with urllib.request.urlopen(req, timeout=timeout) as response:
         return response.read().decode("utf-8")
 
 
-def gh_api(endpoint: str) -> dict | list | None:
-    """GitHub API via gh CLI (handles GITHUB_TOKEN auth in CI)."""
+def gh_api(endpoint: str):
     try:
         result = subprocess.run(
             ["gh", "api", endpoint], capture_output=True, text=True, check=True
@@ -50,29 +59,56 @@ def gh_api(endpoint: str) -> dict | list | None:
         return None
 
 
-def forgejo_api(host: str, endpoint: str) -> dict | list | None:
+def forgejo_api(host: str, endpoint: str):
     try:
         url = f"https://{host}/api/v1/{endpoint}"
-        return json.loads(http_get(url, timeout=30))
+        return json.loads(http_get(url))
     except Exception as e:
         print(f"  forgejo {url} failed: {e}")
         return None
 
 
 def get_latest_release(host: str, owner: str, repo: str) -> dict | None:
-    """Fetch /releases/latest with pre-release fallback."""
     if host == "github.com":
         release = gh_api(f"repos/{owner}/{repo}/releases/latest")
         if release:
             return release
         releases = gh_api(f"repos/{owner}/{repo}/releases?per_page=1") or []
         return releases[0] if releases else None
-    else:
-        release = forgejo_api(host, f"repos/{owner}/{repo}/releases/latest")
-        if release and isinstance(release, dict):
-            return release
-        releases = forgejo_api(host, f"repos/{owner}/{repo}/releases?limit=1") or []
-        return releases[0] if releases else None
+    release = forgejo_api(host, f"repos/{owner}/{repo}/releases/latest")
+    if release and isinstance(release, dict):
+        return release
+    releases = forgejo_api(host, f"repos/{owner}/{repo}/releases?limit=1") or []
+    return releases[0] if releases else None
+
+
+# ─── Repo URL / canonical resolution ─────────────────────────────────
+def parse_repo_url(url: str):
+    m = re.search(r"https?://([^/]+)/([^/]+)/([^/?#]+)", url or "")
+    if not m:
+        return None
+    host, owner, repo = m.groups()
+    repo = repo.rstrip("/")
+    if repo.endswith(".git"):
+        repo = repo[:-4]
+    if repo.lower() == "releases":
+        parts = (url or "").split("/")
+        try:
+            idx = parts.index(host)
+            owner, repo = parts[idx + 1], parts[idx + 2]
+        except (ValueError, IndexError):
+            return None
+    return host, owner, repo
+
+
+def canonical_key(host: str, owner: str, repo: str, release: dict) -> tuple:
+    """Resolve redirects via the release's API url; fall back to input."""
+    if host == "github.com":
+        url = release.get("url", "")
+        m = re.search(r"/repos/([^/]+)/([^/]+)/releases/", url)
+        if m:
+            return (host, m.group(1).lower(), m.group(2).lower())
+    return (host, owner.lower(), repo.lower())
 
 
 # ─── Asset selection ──────────────────────────────────────────────────
@@ -139,7 +175,33 @@ def derive_category(name: str, description: str) -> str:
     return "Misc"
 
 
-# ─── ps5upload catalogue enrichment ──────────────────────────────────
+# ─── Discovery: itsPLK payloads.json ─────────────────────────────────
+def fetch_itsplk_discovery() -> dict:
+    """Return {(host, owner_lower, repo_lower): {host, owner, repo, name, description}}."""
+    try:
+        data = json.loads(http_get(ITSPLK_DISCOVERY_URL, timeout=30))
+    except Exception as e:
+        print(f"itsPLK discovery fetch failed (continuing from sources.json only): {e}")
+        return {}
+    discovered = {}
+    for p in data:
+        info = parse_repo_url(p.get("source", ""))
+        if not info:
+            continue
+        host, owner, repo = info
+        key = (host, owner.lower(), repo.lower())
+        discovered[key] = {
+            "host": host,
+            "owner": owner,
+            "repo": repo,
+            "display_name": p.get("name"),
+            "description": p.get("description") or "",
+        }
+    print(f"itsPLK discovery loaded: {len(discovered)} repos")
+    return discovered
+
+
+# ─── Enrichment: ps5upload CATALOGUE ─────────────────────────────────
 def strip_block_comments(text: str) -> str:
     return re.sub(r"/\*.*?\*/", "", text, flags=re.DOTALL)
 
@@ -180,7 +242,7 @@ def extract_catalogue_block(text: str) -> str:
     return ""
 
 
-def split_entries(block: str) -> list[str]:
+def split_catalogue_entries(block: str) -> list[str]:
     entries = []
     for m in re.finditer(r"CatalogueEntry\s*\{", block):
         s = m.start()
@@ -208,13 +270,12 @@ def split_entries(block: str) -> list[str]:
     return entries
 
 
-def parse_str(entry: str, key: str) -> str | None:
+def parse_catalogue_str(entry: str, key: str) -> str | None:
     m = re.search(rf"\b{re.escape(key)}\s*:\s*\"([^\"]*)\"", entry)
     return m.group(1) if m else None
 
 
 def fetch_ps5upload_enrichment() -> dict:
-    """Return {(host, owner, repo): {display_name, description}} from ps5upload."""
     try:
         raw = strip_block_comments(http_get(PS5UPLOAD_CATALOGUE_URL, timeout=30))
     except Exception as e:
@@ -225,34 +286,26 @@ def fetch_ps5upload_enrichment() -> dict:
         print("ps5upload CATALOGUE block not found; skipping enrichment")
         return {}
     enrichment = {}
-    for entry_text in split_entries(block):
-        host = parse_str(entry_text, "repo_host")
-        owner = parse_str(entry_text, "repo_owner")
-        repo = parse_str(entry_text, "repo_name")
+    for entry_text in split_catalogue_entries(block):
+        host = parse_catalogue_str(entry_text, "repo_host")
+        owner = parse_catalogue_str(entry_text, "repo_owner")
+        repo = parse_catalogue_str(entry_text, "repo_name")
         if not (host and owner and repo):
             continue
-        display_name = parse_str(entry_text, "display_name")
-        description = parse_str(entry_text, "description")
         enrichment[(host, owner.lower(), repo.lower())] = {
-            "display_name": display_name,
-            "description": description,
+            "display_name": parse_catalogue_str(entry_text, "display_name"),
+            "description": parse_catalogue_str(entry_text, "description"),
+            "asset_name_hint": parse_catalogue_str(entry_text, "asset_name_hint") or "",
         }
     print(f"ps5upload enrichment loaded: {len(enrichment)} entries")
     return enrichment
 
 
-# ─── Main aggregation ────────────────────────────────────────────────
-def build_payload_entry(src: dict, enrichment: dict) -> dict | None:
-    host = src["host"]
-    owner = src["owner"]
-    repo = src["repo"]
-    key = (host, owner.lower(), repo.lower())
-    enrich = enrichment.get(key, {})
-
-    display_name = enrich.get("display_name") or src.get("display_name") or repo
-    description = enrich.get("description") or src.get("description") or ""
-    asset_pattern = src.get("asset_pattern", "")
-    has_extract = bool(src.get("extract_file"))
+# ─── Item builder ────────────────────────────────────────────────────
+def build_item(host: str, owner: str, repo: str, override: dict, enrich: dict) -> dict | None:
+    """Fetch release, pick asset, emit schema item. Returns item + canon_key via _canon."""
+    asset_pattern = override.get("asset_pattern") or enrich.get("asset_name_hint") or ""
+    has_extract = bool(override.get("extract_file"))
     preferred_ext = ".bin" if repo.lower() == "etahen" else ".elf"
 
     print(f"Checking {owner}/{repo} on {host}...")
@@ -260,6 +313,7 @@ def build_payload_entry(src: dict, enrichment: dict) -> dict | None:
     if not release:
         print("  no release found, skipping")
         return None
+    canon = canonical_key(host, owner, repo, release)
 
     assets = release.get("assets", [])
     if not assets:
@@ -271,46 +325,49 @@ def build_payload_entry(src: dict, enrichment: dict) -> dict | None:
         print(f"  no suitable asset for {owner}/{repo}, skipping")
         return None
 
-    version = release.get("tag_name", "")
-    last_update = (release.get("published_at") or "")[:10]
-    checksum = get_checksum(selected, host)
+    display_name = (
+        override.get("display_name")
+        or enrich.get("display_name")
+        or repo
+    )
+    description = (
+        override.get("description")
+        or enrich.get("description")
+        or ""
+    )
     category = derive_category(display_name, description)
-    source_url = f"https://{host}/{owner}/{repo}/releases"
+    checksum = get_checksum(selected, host)
 
-    print(f"  → {selected['name']} @ {version} ({category})")
-    return {
+    item = {
         "name": display_name,
         "filename": selected["name"],
         "url": selected["browser_download_url"],
         "description": description,
-        "version": version,
+        "version": release.get("tag_name", ""),
         "category": category,
         "checksum": checksum,
-        "last_update": last_update,
-        "source": source_url,
+        "last_update": (release.get("published_at") or "")[:10],
+        "source": f"https://{canon[0]}/{canon[1]}/{canon[2]}/releases",
+        "_canon": canon,
     }
+    print(f"  → {selected['name']} @ {release.get('tag_name')} ({category})")
+    return item
 
 
+# ─── README ──────────────────────────────────────────────────────────
 def update_readme(payloads: list[dict]) -> None:
     rows = [
         "| Name | Version | Category | Description | Last Updated | Source |",
         "| --- | --- | --- | --- | --- | --- |",
     ]
     for p in payloads:
-        name = p.get("name", "")
-        version = p.get("version", "")
-        category = p.get("category", "")
         description = (p.get("description") or "No description provided.").replace("|", "\\|")
-        last_update = p.get("last_update", "")
-        source = p.get("source", "")
         rows.append(
-            f"| **{name}** | `{version}` | {category} | {description} | `{last_update}` | [Source]({source}) |"
+            f"| **{p.get('name','')}** | `{p.get('version','')}` | {p.get('category','')} | "
+            f"{description} | `{p.get('last_update','')}` | [Source]({p.get('source','')}) |"
         )
     table = "\n".join(rows)
-
-    start = "<!-- PAYLOADS_START -->"
-    end = "<!-- PAYLOADS_END -->"
-
+    start, end = "<!-- PAYLOADS_START -->", "<!-- PAYLOADS_END -->"
     if not Path(README_FILE).exists():
         return
     with open(README_FILE, "r", encoding="utf-8") as f:
@@ -323,30 +380,71 @@ def update_readme(payloads: list[dict]) -> None:
         print(f"Updated {README_FILE}")
 
 
+# ─── Main ────────────────────────────────────────────────────────────
 def main() -> None:
     with open(SOURCES_FILE, "r", encoding="utf-8") as f:
         sources = json.load(f)
-    print(f"Loaded {len(sources)} sources from {SOURCES_FILE}")
+    print(f"Loaded {len(sources)} curated entries from {SOURCES_FILE}")
 
+    discovery = fetch_itsplk_discovery()
     enrichment = fetch_ps5upload_enrichment()
 
-    payloads = []
-    skipped = []
+    # sources.json: keyed dict + exclude set
+    overrides = {}
+    excludes = set()
     for src in sources:
-        item = build_payload_entry(src, enrichment)
-        if item:
-            payloads.append(item)
-        else:
-            skipped.append(f"{src['owner']}/{src['repo']}")
+        key = (src["host"], src["owner"].lower(), src["repo"].lower())
+        overrides[key] = src
+        if src.get("exclude"):
+            excludes.add(key)
 
-    document = {"name": CATALOGUE_NAME, "payloads": payloads}
+    # Union of repos to consider: curated + discovered
+    all_keys = list(overrides.keys()) + [k for k in discovery.keys() if k not in overrides]
+
+    final_items = []
+    canon_seen = set()
+    skipped = []
+
+    for key in all_keys:
+        if key in excludes:
+            print(f"Excluded by sources.json: {key[1]}/{key[2]}")
+            continue
+
+        override = overrides.get(key, {})
+        disc = discovery.get(key)
+        if override:
+            host, owner, repo = override["host"], override["owner"], override["repo"]
+        elif disc:
+            host, owner, repo = disc["host"], disc["owner"], disc["repo"]
+            # Carry itsPLK name/description as fallback override.
+            override = {
+                "display_name": disc.get("display_name") or "",
+                "description": disc.get("description") or "",
+            }
+        else:
+            continue
+
+        enrich = enrichment.get(key, {})
+        item = build_item(host, owner, repo, override, enrich)
+        if not item:
+            skipped.append(f"{owner}/{repo}")
+            continue
+
+        canon = item.pop("_canon")
+        if canon in canon_seen:
+            print(f"  dedup: {owner}/{repo} folds into {canon[1]}/{canon[2]}, already listed")
+            continue
+        canon_seen.add(canon)
+        final_items.append(item)
+
+    document = {"name": CATALOGUE_NAME, "payloads": final_items}
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         json.dump(document, f, indent=2, ensure_ascii=False)
-    print(f"Wrote {OUTPUT_FILE} ({len(payloads)} payloads, {len(skipped)} skipped)")
+    print(f"\nWrote {OUTPUT_FILE} ({len(final_items)} payloads, {len(skipped)} skipped)")
     if skipped:
         print(f"Skipped: {', '.join(skipped)}")
 
-    update_readme(payloads)
+    update_readme(final_items)
 
 
 if __name__ == "__main__":
