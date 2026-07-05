@@ -424,10 +424,6 @@ def main() -> None:
     skipped = []
 
     for key in all_keys:
-        if key in excludes:
-            print(f"Excluded by sources.json: {key[1]}/{key[2]}")
-            continue
-
         src_override = overrides.get(key, {})
         disc = discovery.get(key, {})
         psu = ps5upload.get(key, {})
@@ -455,6 +451,11 @@ def main() -> None:
             continue
 
         canon = item.pop("_canon")
+        # Exclude by either the alias key or the resolved canonical key, so an
+        # exclude on etaHEN/etaHEN also catches the LightningMods/etaHEN alias.
+        if key in excludes or canon in excludes:
+            print(f"Excluded: {owner}/{repo} (canon {canon[1]}/{canon[2]})")
+            continue
         if canon in canon_seen:
             print(f"  dedup: {owner}/{repo} folds into {canon[1]}/{canon[2]}, already listed")
             continue
