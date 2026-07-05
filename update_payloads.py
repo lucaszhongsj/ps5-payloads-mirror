@@ -73,7 +73,7 @@ def format_last_update(iso_str: str) -> str:
     try:
         dt = datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
         return dt.astimezone(CST).strftime("%Y-%m-%d %H:%M:%S UTC+8")
-    except Exception:
+    except (ValueError, TypeError):
         return iso_str
 
 
@@ -202,8 +202,11 @@ def fetch_itsplk_discovery() -> dict:
         info = parse_repo_url(repo_url)
         if not info:
             continue
-        # `source` in itsPLK points at /releases; trim to the repo root URL.
-        repo_url = repo_url.split("/releases")[0].rstrip("/")
+        # `source` in itsPLK points at .../releases; trim to the repo root URL.
+        # Anchored regex avoids mis-truncation when owner/repo names contain
+        # 'releases' (e.g. releases-app/foo/releases).
+        m = re.search(r"^(.*?)/releases(?:/|$)", repo_url)
+        repo_url = (m.group(1) if m else repo_url).rstrip("/")
         discovered[normalize_repo_url(repo_url)] = {
             "repo_url": repo_url,
             "display_name": p.get("name"),
@@ -381,9 +384,10 @@ def update_readme(payloads: list[dict]) -> None:
         source_url = p.get("source", "")
         m = re.search(r"https?://[^/]+/([^/]+)/([^/]+)", source_url)
         source_label = f"{m.group(1)}/{m.group(2)}" if m else "Source"
+        last_update = p.get("last_update") or "-"
         rows.append(
             f"| **{p.get('name','')}** | `{p.get('version','')}` | {p.get('category','')} | "
-            f"{description} | `{p.get('last_update','')}` | [{source_label}]({source_url}) |"
+            f"{description} | `{last_update}` | [{source_label}]({source_url}) |"
         )
     table = "\n".join(rows)
     start, end = "<!-- PAYLOADS_START -->", "<!-- PAYLOADS_END -->"
@@ -393,9 +397,11 @@ def update_readme(payloads: list[dict]) -> None:
         content = f.read()
     if start in content and end in content:
         pattern = re.compile(f"{re.escape(start)}.*?{re.escape(end)}", re.DOTALL)
-        content = pattern.sub(f"{start}\n{table}\n{end}", content)
+        new_content = pattern.sub(f"{start}\n{table}\n{end}", content)
+        if new_content == content:
+            return  # no change, skip write
         with open(README_FILE, "w", encoding="utf-8") as f:
-            f.write(content)
+            f.write(new_content)
         print(f"Updated {README_FILE}")
 
 
@@ -414,7 +420,10 @@ def main() -> None:
         repo_url = src.get("url") or src.get("source", "")
         if not repo_url:
             continue
-        overrides[normalize_repo_url(repo_url)] = {**src, "repo_url": repo_url}
+        key = normalize_repo_url(repo_url)
+        if key in overrides:
+            print(f"warning: duplicate sources.json entry for {key}; last one wins")
+        overrides[key] = {**src, "repo_url": repo_url}
 
     # Union: curated overrides + itsPLK discovery + ps5upload catalogue
     seen = set(overrides.keys())
@@ -478,6 +487,7 @@ def main() -> None:
     document = {"name": CATALOGUE_NAME, "payloads": final_items}
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         json.dump(document, f, indent=2, ensure_ascii=False)
+        f.write("\n")
     print(
         f"\nWrote {OUTPUT_FILE}: {len(final_items)} listed, "
         f"{n_excluded} excluded, {n_deduped} deduped, {len(skipped)} skipped"
