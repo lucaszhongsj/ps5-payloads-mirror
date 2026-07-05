@@ -11,6 +11,18 @@
     "checksum": "ec5212794dc6e44ee8e70fd0549abec6d3dac8c3e03ddbeafd9f869ffe97d4e8"
   },
   {
+    "name": "garlic-worker",
+    "filename": "garlic-worker_v1.1.6.elf",
+    "url": "https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/garlic-worker_v1.1.6.elf",
+    "source": "https://git.etawen.dev/earthonion/garlic-worker/releases",
+    "source_direct": "https://git.etawen.dev/earthonion/garlic-worker/releases/download/v1.1.6/garlic-worker-ps5.elf",
+    "asset_pattern": "garlic-worker-ps5",
+    "description": "Background worker that drains the community save-decryption queue from garlicsaves.com. Handles both PS4 and PS5 saves natively. **Privacy notice**: connects to garlicsaves.com and processes other users' encrypted save files. Off by default \u2014 install + run manually if you want to contribute back to the community queue.",
+    "last_update": "2026-07-04",
+    "version": "v1.1.6",
+    "checksum": "a16fdd755e5de0dd047f8680f46763ad60a2cee048a1afc61b9d6496290ddf12"
+  },
+  {
     "name": "ps5-linux-loader",
     "filename": "ps5-linux-loader_v2.3.elf",
     "url": "https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/ps5-linux-loader_v2.3.elf",
@@ -54,6 +66,18 @@
     "last_update": "2026-06-28",
     "version": "v0.19",
     "checksum": "797827b50a93dbf327abdca45063d76ea24b17e561d927f397a0b73cadb2e2bd"
+  },
+  {
+    "name": "shadowmountplus",
+    "filename": "shadowmountplus_1.6beta16.elf",
+    "url": "https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/shadowmountplus_1.6beta16.elf",
+    "source": "https://github.com/drakmor/shadowMountPlus/releases",
+    "source_direct": "https://github.com/drakmor/ShadowMountPlus/releases/download/1.6beta16/shadowmountplus.elf",
+    "asset_pattern": "shadowmountplus",
+    "description": "Watches scan folders (/mnt/usb*, /mnt/ext*, /data/homebrew, /mnt/shadowmnt) AND /data/shadowmount/manual.lst for game folders and .ffpkg/.exfat/.ffpfs/.ffpfsc images, then auto-mounts (LVD/MD), stages sce_sys + appmeta + trophy data, and registers them on the home screen \u2014 no per-image command, it's fully autonomous. Newer builds add nested/compressed-PFS (.ffpfsc) containers, trophy-data copy, and a watched manual-install list. Includes fakelib (backports) overlay + per-game kstuff autopause. Needs kstuff-lite v1.07+ loaded first.",
+    "last_update": "2026-06-28",
+    "version": "1.6beta16",
+    "checksum": "a35246fb3bb6042b25653b51cdcbc33254b40339342bf1d2dd0d2eceee2ca526"
   },
   {
     "name": "ps5debug-NG",
@@ -132,6 +156,30 @@
     "last_update": "2026-05-31",
     "version": "1.2-dr-test1",
     "checksum": "9c1b242eaed3704ef18be45d001a2c4ebf2d9222cfe3cbb0f0c3db33309abac9"
+  },
+  {
+    "name": "ghostpad",
+    "filename": "ghostpad_v1.0.0.elf",
+    "url": "https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/ghostpad_v1.0.0.elf",
+    "source": "https://github.com/StonedModder/Ghostpad/releases",
+    "source_direct": "https://github.com/StonedModder/Ghostpad/releases/download/v1.0.0/ghostpad.elf",
+    "asset_pattern": "ghostpad.elf",
+    "description": "Creates a virtual PS5 controller on the console and redirects input to it \u2014 useful for input automation, remote control, and accessibility setups. Send the payload to start it; pair it with the upstream's companion app for driving the virtual pad.",
+    "last_update": "2026-05-31",
+    "version": "v1.0.0",
+    "checksum": "94d43a8db7ec9df6e18f0a0da25aac0f60e1a0b14d35bfff261f6f5cdeabdba1"
+  },
+  {
+    "name": "np-fake-signin",
+    "filename": "np-fake-signin_v1.3.elf",
+    "url": "https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/np-fake-signin_v1.3.elf",
+    "source": "https://git.etawen.dev/earthonion/np-fake-signin/releases",
+    "source_direct": "https://git.etawen.dev/earthonion/np-fake-signin/releases/download/v1.3/np-fake-signin-ps5.elf",
+    "asset_pattern": "np-fake-signin-ps5",
+    "description": "Headless payload that registers PS5 user slots directly via the system registry. Replaces having to sign into a real PSN account just to set up local users \u2014 handy for fresh jailbreaks, secondary accounts, or test profiles. One-shot ELF: send, runs, exits.",
+    "last_update": "2026-05-15",
+    "version": "v1.3",
+    "checksum": "f5c66fcb9e3f512e5463a7123d819b87f063d9955639366fa7ad26a2f0abefa4"
   },
   {
     "name": "ftpsrv",
@@ -234,22 +282,28 @@
     "checksum": "4845cac45095361b8983b14d6690622183b0dcfbf6d7fda16e161aa91ff0531e"
   },
   {
-    "name": "shadowmountplus",
-    "source": "https://github.com/drakmor/shadowMountPlus/releases",
-    "asset_pattern": "shadowmountplus",
-    "description": "Watches scan folders (/mnt/usb*, /mnt/ext*, /data/homebrew, /mnt/shadowmnt) AND /data/shadowmount/manual.lst for game folders and .ffpkg/.exfat/.ffpfs/.ffpfsc images, then auto-mounts (LVD/MD), stages sce_sys + appmeta + trophy data, and registers them on the home screen — no per-image command, it's fully autonomous. Newer builds add nested/compressed-PFS (.ffpfsc) containers, trophy-data copy, and a watched manual-install list. Includes fakelib (backports) overlay + per-game kstuff autopause. Needs kstuff-lite v1.07+ loaded first."
-  },
-  {
     "name": "etahen",
+    "filename": "etahen_2.5B.bin",
+    "url": "https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/etahen_2.5B.bin",
     "source": "https://github.com/LightningMods/etaHEN/releases",
+    "source_direct": "https://github.com/etaHEN/etaHEN/releases/download/2.5B/etaHEN-2.5B.bin",
     "asset_pattern": "etaHEN",
-    "description": "Long-running homebrew enabler with toolbox features. Faster app jailbreak than the on-the-fly path; provides the HijackerCommand IPC many homebrew apps expect on :9028."
+    "description": "Long-running homebrew enabler with toolbox features. Faster app jailbreak than the on-the-fly path; provides the HijackerCommand IPC many homebrew apps expect on :9028.",
+    "last_update": "2025-12-25",
+    "version": "2.5B",
+    "checksum": "4845cac45095361b8983b14d6690622183b0dcfbf6d7fda16e161aa91ff0531e"
   },
   {
     "name": "ezremote-dpi",
+    "filename": "ezremote-dpi_1.04.elf",
+    "url": "https://github.com/itsPLK/ps5-payloads-mirror/releases/download/payloads-mirror/ezremote-dpi_1.04.elf",
     "source": "https://github.com/cy33hc/ps5-ezremote-dpi/releases",
+    "source_direct": "https://github.com/cy33hc/ps5-ezremote-dpi/releases/download/1.04/ezremote-dpi.elf",
     "asset_pattern": "ezremote-dpi",
-    "description": "Long-lived loopback install daemon (127.0.0.1:9040). Owns Sony's PlayGo/AppInstUtil install state machine so installs don't evaporate when the calling process exits. Sonicloader and ezremote-client both use this as their primary install path. Once installed, ps5upload's install runner will offer a 'DPI' method that proxies to it (planned for follow-up)."
+    "description": "Long-lived loopback install daemon (127.0.0.1:9040). Owns Sony's PlayGo/AppInstUtil install state machine so installs don't evaporate when the calling process exits. Sonicloader and ezremote-client both use this as their primary install path. Once installed, ps5upload's install runner will offer a 'DPI' method that proxies to it (planned for follow-up).",
+    "last_update": "2025-07-01",
+    "version": "1.04",
+    "checksum": "54a57a7a68ee7d44064438d9a63fafc08ecbaf033dcbdee28f8f3119914ea109"
   },
   {
     "name": "itemzflow",
@@ -266,24 +320,6 @@
     "name": "lapyjb",
     "source": "https://git.etawen.dev/voidwhisper/lapy-jb-daemon/releases",
     "asset_pattern": "lapyjb",
-    "description": "Standalone PID-jailbreak daemon that handles app escalation directly. Apps that previously needed etaHEN's HijackerCommand IPC (Itemzflow, xplorer, anything using universalps5 PRX) just work with lapyjb running. Smaller, simpler than etaHEN — recommended over etaHEN if you only need the app-jb side."
-  },
-  {
-    "name": "np-fake-signin",
-    "source": "https://git.etawen.dev/earthonion/np-fake-signin/releases",
-    "asset_pattern": "np-fake-signin-ps5",
-    "description": "Headless payload that registers PS5 user slots directly via the system registry. Replaces having to sign into a real PSN account just to set up local users — handy for fresh jailbreaks, secondary accounts, or test profiles. One-shot ELF: send, runs, exits."
-  },
-  {
-    "name": "garlic-worker",
-    "source": "https://git.etawen.dev/earthonion/garlic-worker/releases",
-    "asset_pattern": "garlic-worker-ps5",
-    "description": "Background worker that drains the community save-decryption queue from garlicsaves.com. Handles both PS4 and PS5 saves natively. **Privacy notice**: connects to garlicsaves.com and processes other users' encrypted save files. Off by default — install + run manually if you want to contribute back to the community queue."
-  },
-  {
-    "name": "ghostpad",
-    "source": "https://github.com/StonedModder/Ghostpad/releases",
-    "asset_pattern": "ghostpad.elf",
-    "description": "Creates a virtual PS5 controller on the console and redirects input to it — useful for input automation, remote control, and accessibility setups. Send the payload to start it; pair it with the upstream's companion app for driving the virtual pad."
+    "description": "Standalone PID-jailbreak daemon that handles app escalation directly. Apps that previously needed etaHEN's HijackerCommand IPC (Itemzflow, xplorer, anything using universalps5 PRX) just work with lapyjb running. Smaller, simpler than etaHEN \u2014 recommended over etaHEN if you only need the app-jb side."
   }
 ]
