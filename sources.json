@@ -1,0 +1,196 @@
+[
+  {
+    "host": "github.com",
+    "owner": "EchoStretch",
+    "repo": "kstuff-lite",
+    "asset_pattern": "kstuff",
+    "display_name": "kstuff-lite (EchoStretch)",
+    "description": "Kernel patcher for the full PS5 firmware range. Resolves kernel symbols at runtime via the SDK's NID table, so the same binary covers FW 1.00–12.x. Required by ShadowMountPlus and most other privileged payloads. Load this first."
+  },
+  {
+    "host": "github.com",
+    "owner": "drakmor",
+    "repo": "kstuff-lite",
+    "asset_pattern": "kstuff",
+    "display_name": "kstuff-lite (drakmor — fpkg-optimized)",
+    "description": "Fork of EchoStretch/kstuff-lite with a hot path for .ffpkg (UFS) + PFS mounts and lower overhead in repeated mount/unmount cycles. Adds an option to disable automatic mounting (noautomount) for a controlled startup."
+  },
+  {
+    "host": "github.com",
+    "owner": "EchoStretch",
+    "repo": "kstuff",
+    "display_name": "kstuff",
+    "description": "Full build of kstuff: dynamically patches the PS5 kernel to bypass security."
+  },
+  {
+    "host": "github.com",
+    "owner": "EchoStretch",
+    "repo": "kstuff-toggle",
+    "extract_file": "kstuff-toggle-3.elf",
+    "display_name": "kstuff-toggle",
+    "description": "Boost homebrew game performance on your PS5 by disabling Kstuff after launching the game. Ships as a zip; extract kstuff-toggle-3.elf after download."
+  },
+  {
+    "host": "github.com",
+    "owner": "drakmor",
+    "repo": "ShadowMountPlus",
+    "asset_pattern": "shadowmountplus",
+    "extract_file": "shadowmountplus.elf",
+    "display_name": "ShadowMount+",
+    "description": "Fully automated background 'Auto-Mounter' payload for jailbroken PS5. Watches scan folders for game folders and .ffpkg/.exfat/.ffpfs/.ffpfsc images, auto-mounts them, stages sce_sys + appmeta + trophy data, and registers them on the home screen."
+  },
+  {
+    "host": "github.com",
+    "owner": "etaHEN",
+    "repo": "etaHEN",
+    "display_name": "etaHEN",
+    "description": "Long-running homebrew enabler with toolbox features. Faster app jailbreak than the on-the-fly path; provides the HijackerCommand IPC many homebrew apps expect on :9028."
+  },
+  {
+    "host": "github.com",
+    "owner": "ps5-payload-dev",
+    "repo": "ftpsrv",
+    "display_name": "ftpsrv",
+    "description": "Lightweight FTP server on :2121 with SELF/ELF auto-decryption and remount-RW SITE commands. Browse the PS5 filesystem from any FTP client."
+  },
+  {
+    "host": "github.com",
+    "owner": "drakmor",
+    "repo": "ftpsrv",
+    "display_name": "ftpsrv (drakmor)",
+    "description": "drakmor's fork of ftpsrv."
+  },
+  {
+    "host": "github.com",
+    "owner": "ps5-payload-dev",
+    "repo": "websrv",
+    "display_name": "websrv",
+    "description": "HTTP server on :8080 serving a homebrew launcher page. Pairs with the homebrew bundles distributed by ps5-payload-dev."
+  },
+  {
+    "host": "github.com",
+    "owner": "ps5-payload-dev",
+    "repo": "shsrv",
+    "display_name": "shsrv",
+    "description": "Telnet server on :2323 with 42 POSIX-ish commands plus hbldr (launch unsigned ELF with full A/V) and hbdbg (gdb-style debugger)."
+  },
+  {
+    "host": "github.com",
+    "owner": "ps5-payload-dev",
+    "repo": "klogsrv",
+    "display_name": "klogsrv",
+    "description": "Streams /dev/klog over TCP :3232 and tees it to /data/klog/klog.log (10-backup rotation)."
+  },
+  {
+    "host": "github.com",
+    "owner": "ps5-payload-dev",
+    "repo": "elfldr",
+    "display_name": "elfldr",
+    "description": "An ELF loader for jailbroken PS5s that accepts payloads on port 9021."
+  },
+  {
+    "host": "github.com",
+    "owner": "EchoStretch",
+    "repo": "ps5-app-dumper",
+    "asset_pattern": "dumper",
+    "display_name": "ps5-app-dumper",
+    "description": "Dumps installed PS5 apps to USB or internal storage in fakepkg/folder format. Reads config from /data/ps5-app-dumper/config.ini."
+  },
+  {
+    "host": "github.com",
+    "owner": "drakmor",
+    "repo": "nanoDNS",
+    "asset_pattern": "nanodns.elf",
+    "display_name": "nanoDNS",
+    "description": "Minimal DNS server running on the PS5 (UDP :53). Blocks PlayStation Network + update domains by default and can redirect any domain to a LAN IP."
+  },
+  {
+    "host": "github.com",
+    "owner": "StonedModder",
+    "repo": "Ghostpad",
+    "asset_pattern": "ghostpad.elf",
+    "display_name": "Ghostpad",
+    "description": "Creates a virtual PS5 controller on the console and redirects input to it — useful for input automation, remote control, and accessibility setups."
+  },
+  {
+    "host": "github.com",
+    "owner": "cy33hc",
+    "repo": "ps5-ezremote-dpi",
+    "asset_pattern": "ezremote-dpi",
+    "display_name": "ezremote-DPI",
+    "description": "Long-lived loopback PKG install daemon (127.0.0.1:9040). Owns Sony's PlayGo/AppInstUtil install state machine so installs don't evaporate when the calling process exits."
+  },
+  {
+    "host": "github.com",
+    "owner": "notmaj0r",
+    "repo": "CheatRunner",
+    "display_name": "CheatRunner",
+    "description": "Loads and applies game cheats on the PS5. Send it like any other payload, then browse and toggle cheats for supported titles on the console."
+  },
+  {
+    "host": "github.com",
+    "owner": "itsPLK",
+    "repo": "PS5-Lapy-JB-Daemon",
+    "display_name": "Lapy JB Daemon",
+    "description": "Standalone homebrew jailbreak daemon for PS5. Mimics etaHEN's jailbreak-on-demand API. Multi-firmware (3.00 to 12.00). No etaHEN required. Upstream voidwhisper/lapy-jb-daemon on git.etawen.dev is offline; this GitHub mirror is the live source."
+  },
+  {
+    "host": "github.com",
+    "owner": "OpenSourcereR-dev",
+    "repo": "ps5debug-NG",
+    "display_name": "ps5debug-NG",
+    "description": "PS5 debugger payload — userland TCP wire-protocol server hosted inside SceShellCore."
+  },
+  {
+    "host": "github.com",
+    "owner": "seregonwar",
+    "repo": "zftpd",
+    "asset_pattern": "zhttp",
+    "display_name": "zftpd",
+    "description": "Zero-copy FTP/HTTP server."
+  },
+  {
+    "host": "github.com",
+    "owner": "itsPLK",
+    "repo": "pldmgr",
+    "display_name": "pldmgr",
+    "description": "A modern, web-based dashboard to easily manage, import, and automatically load payloads on your PS5."
+  },
+  {
+    "host": "github.com",
+    "owner": "ps5-linux",
+    "repo": "ps5-linux-loader",
+    "display_name": "ps5-linux-loader",
+    "description": "Linux payload implementing HV exploits to run a custom bootloader."
+  },
+  {
+    "host": "github.com",
+    "owner": "BestPig",
+    "repo": "BackPork",
+    "display_name": "BackPork",
+    "description": "Lets you sideload system libraries into PS5 games."
+  },
+  {
+    "host": "git.etawen.dev",
+    "owner": "earthonion",
+    "repo": "garlic-worker",
+    "asset_pattern": "garlic-worker-ps5",
+    "display_name": "Garlic Worker",
+    "description": "Background worker that drains the community save-decryption queue from garlicsaves.com. Handles both PS4 and PS5 saves natively. Opt-in: connects to garlicsaves.com."
+  },
+  {
+    "host": "git.etawen.dev",
+    "owner": "earthonion",
+    "repo": "garlic-savemgr",
+    "display_name": "Garlic SaveMgr",
+    "description": "On-console save decrypt/encrypt daemon. Back up saves in plaintext, edit on PC, re-encrypt for the same console. No network."
+  },
+  {
+    "host": "git.etawen.dev",
+    "owner": "earthonion",
+    "repo": "np-fake-signin",
+    "asset_pattern": "np-fake-signin-ps5",
+    "display_name": "NP Fake Sign-in",
+    "description": "Headless payload that registers PS5 user slots directly via the system registry. Offline account activation without PSN. One-shot ELF: send, runs, exits."
+  }
+]
