@@ -196,6 +196,8 @@ def fetch_itsplk_discovery() -> dict:
             "repo": repo,
             "display_name": p.get("name"),
             "description": p.get("description") or "",
+            "asset_pattern": p.get("asset_pattern") or "",
+            "extract_file": p.get("extract_file"),
         }
     print(f"itsPLK discovery loaded: {len(discovered)} repos")
     return discovered
@@ -275,30 +277,38 @@ def parse_catalogue_str(entry: str, key: str) -> str | None:
     return m.group(1) if m else None
 
 
-def fetch_ps5upload_enrichment() -> dict:
+def fetch_ps5upload_catalogue() -> dict:
+    """Return {(host, owner_lower, repo_lower): {host, owner, repo, display_name, description, asset_name_hint}}.
+
+    The ps5upload CATALOGUE is used both for discovery (the repos it lists) and
+    for enrichment (the descriptions / display names it carries).
+    """
     try:
         raw = strip_block_comments(http_get(PS5UPLOAD_CATALOGUE_URL, timeout=30))
     except Exception as e:
-        print(f"ps5upload catalogue fetch failed (continuing without enrichment): {e}")
+        print(f"ps5upload catalogue fetch failed (continuing without it): {e}")
         return {}
     block = extract_catalogue_block(raw)
     if not block:
-        print("ps5upload CATALOGUE block not found; skipping enrichment")
+        print("ps5upload CATALOGUE block not found; skipping")
         return {}
-    enrichment = {}
+    catalogue = {}
     for entry_text in split_catalogue_entries(block):
         host = parse_catalogue_str(entry_text, "repo_host")
         owner = parse_catalogue_str(entry_text, "repo_owner")
         repo = parse_catalogue_str(entry_text, "repo_name")
         if not (host and owner and repo):
             continue
-        enrichment[(host, owner.lower(), repo.lower())] = {
+        catalogue[(host, owner.lower(), repo.lower())] = {
+            "host": host,
+            "owner": owner,
+            "repo": repo,
             "display_name": parse_catalogue_str(entry_text, "display_name"),
             "description": parse_catalogue_str(entry_text, "description"),
             "asset_name_hint": parse_catalogue_str(entry_text, "asset_name_hint") or "",
         }
-    print(f"ps5upload enrichment loaded: {len(enrichment)} entries")
-    return enrichment
+    print(f"ps5upload catalogue loaded: {len(catalogue)} entries")
+    return catalogue
 
 
 # ─── Item builder ────────────────────────────────────────────────────
@@ -346,7 +356,7 @@ def build_item(host: str, owner: str, repo: str, override: dict, enrich: dict) -
         "version": release.get("tag_name", ""),
         "category": category,
         "checksum": checksum,
-        "last_update": (release.get("published_at") or "")[:10],
+        "last_update": release.get("published_at") or "",
         "source": f"https://{canon[0]}/{canon[1]}/{canon[2]}/releases",
         "_canon": canon,
     }
@@ -390,7 +400,7 @@ def main() -> None:
     print(f"Loaded {len(sources)} curated entries from {SOURCES_FILE}")
 
     discovery = fetch_itsplk_discovery()
-    enrichment = fetch_ps5upload_enrichment()
+    ps5upload = fetch_ps5upload_catalogue()
 
     # sources.json: keyed dict + exclude set
     overrides = {}
@@ -401,8 +411,13 @@ def main() -> None:
         if src.get("exclude"):
             excludes.add(key)
 
-    # Union of repos to consider: curated + discovered
-    all_keys = list(overrides.keys()) + [k for k in discovery.keys() if k not in overrides]
+    # Union of repos to consider: curated + itsPLK discovery + ps5upload catalogue
+    seen = set(overrides.keys())
+    all_keys = list(overrides.keys())
+    for k in list(discovery.keys()) + list(ps5upload.keys()):
+        if k not in seen:
+            all_keys.append(k)
+            seen.add(k)
 
     final_items = []
     canon_seen = set()
@@ -413,22 +428,28 @@ def main() -> None:
             print(f"Excluded by sources.json: {key[1]}/{key[2]}")
             continue
 
-        override = overrides.get(key, {})
-        disc = discovery.get(key)
-        if override:
-            host, owner, repo = override["host"], override["owner"], override["repo"]
-        elif disc:
-            host, owner, repo = disc["host"], disc["owner"], disc["repo"]
-            # Carry itsPLK name/description as fallback override.
-            override = {
-                "display_name": disc.get("display_name") or "",
-                "description": disc.get("description") or "",
-            }
-        else:
-            continue
+        src_override = overrides.get(key, {})
+        disc = discovery.get(key, {})
+        psu = ps5upload.get(key, {})
 
-        enrich = enrichment.get(key, {})
-        item = build_item(host, owner, repo, override, enrich)
+        # Resolve host/owner/repo (sources.json wins for stability)
+        identity = src_override or disc or psu
+        if not identity:
+            continue
+        host = identity["host"]
+        owner = identity["owner"]
+        repo = identity["repo"]
+
+        # Build merged override with priority: sources.json > ps5upload > itsPLK
+        override = {}
+        for field in ("display_name", "description", "asset_pattern", "extract_file"):
+            for src_data in (src_override, psu, disc):
+                val = src_data.get(field)
+                if val:
+                    override[field] = val
+                    break
+
+        item = build_item(host, owner, repo, override, psu)
         if not item:
             skipped.append(f"{owner}/{repo}")
             continue
@@ -439,6 +460,8 @@ def main() -> None:
             continue
         canon_seen.add(canon)
         final_items.append(item)
+
+    final_items.sort(key=lambda p: p.get("name", "").lower())
 
     document = {"name": CATALOGUE_NAME, "payloads": final_items}
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
