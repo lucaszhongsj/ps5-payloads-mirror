@@ -35,17 +35,6 @@
       "source": "https://github.com/ps5-payload-dev/elfldr/releases"
     },
     {
-      "name": "etaHEN",
-      "filename": "etaHEN-2.5B.bin",
-      "url": "https://github.com/etaHEN/etaHEN/releases/download/2.5B/etaHEN-2.5B.bin",
-      "description": "Long-running homebrew enabler with toolbox features. Faster app jailbreak than the on-the-fly path; provides the HijackerCommand IPC many homebrew apps expect on :9028.",
-      "version": "2.5B",
-      "category": "Kernel",
-      "checksum": "4845cac45095361b8983b14d6690622183b0dcfbf6d7fda16e161aa91ff0531e",
-      "last_update": "2025-12-25T05:31:40Z",
-      "source": "https://github.com/etahen/etahen/releases"
-    },
-    {
       "name": "ezremote-DPI",
       "filename": "ezremote-dpi.elf",
       "url": "https://github.com/cy33hc/ps5-ezremote-dpi/releases/download/1.04/ezremote-dpi.elf",
