@@ -123,26 +123,32 @@ def get_latest_release(repo_url: str) -> dict | None:
 
 
 def repo_url_from_release(release: dict) -> str:
-    """`https://github.com/o/r/releases/tag/v1` → `https://github.com/o/r` (lowercased)."""
+    """`https://github.com/o/r/releases/tag/v1` → `https://github.com/o/r` (lowercased).
+
+    Matches the full `/releases/tag/` anchor so owners/repos whose names contain
+    'releases' (e.g. `releases-app/foo`) are not mis-truncated.
+    """
     html_url = release.get("html_url") or ""
-    idx = html_url.find("/releases")
-    return html_url[:idx].lower() if idx > 0 else ""
+    m = re.search(r"^(.*?)/releases/tag/", html_url)
+    return m.group(1).lower() if m else ""
 
 
 # ─── Asset selection ─────────────────────────────────────────────────
-def pick_asset(assets: list, asset_pattern: str) -> dict | None:
+def pick_asset(assets: list, asset_pattern: str, repo_url: str) -> dict | None:
     """Select the canonical payload asset by explicit priority (no magic numbers).
 
-    Keep only .elf/.bin → if asset_pattern given, narrow to matches (fallback
-    to unfiltered if none match) → prefer .elf over .bin, non-ps4 over ps4,
-    shorter filename over longer.
+    Keep only .elf/.bin → if asset_pattern given, narrow to matches (with a
+    warning + fallback to unfiltered if the pattern matches nothing) → prefer
+    .elf over .bin, non-ps4 over ps4, shorter filename over longer.
     """
     candidates = [a for a in assets if a["name"].endswith((".elf", ".bin"))]
     if not candidates:
         return None
     if asset_pattern:
         matched = [a for a in candidates if re.search(asset_pattern, a["name"], re.IGNORECASE)]
-        if matched:
+        if not matched:
+            print(f"  warning: asset_pattern {asset_pattern!r} matched no asset for {repo_url}; falling back")
+        else:
             candidates = matched
     return min(
         candidates,
@@ -184,7 +190,7 @@ def derive_category(name: str, description: str) -> str:
 
 # ─── Discovery: itsPLK payloads.json ────────────────────────────────
 def fetch_itsplk_discovery() -> dict:
-    """Return {repo_url_lower: {repo_url, display_name, description, asset_pattern, extract_file}}."""
+    """Return {repo_url_lower: {repo_url, display_name, description, asset_pattern}}."""
     try:
         data = json.loads(http_get(ITSPLK_DISCOVERY_URL, timeout=30))
     except Exception as e:
@@ -278,8 +284,14 @@ def split_catalogue_entries(block: str) -> list[str]:
 
 
 def parse_catalogue_str(entry: str, key: str) -> str | None:
-    m = re.search(rf"\b{re.escape(key)}\s*:\s*\"([^\"]*)\"", entry)
-    return m.group(1) if m else None
+    """Read a Rust string literal value for `key`. Handles `\\\"` escapes so
+    descriptions containing escaped quotes are not truncated."""
+    m = re.search(rf'\b{re.escape(key)}\s*:\s*"((?:\\.|[^"\\])*)"', entry)
+    if not m:
+        return None
+    raw = m.group(1)
+    # Unescape the Rust escapes we are likely to see in catalogue strings.
+    return raw.replace('\\"', '"').replace("\\n", "\n").replace("\\t", "\t").replace("\\\\", "\\")
 
 
 def fetch_ps5upload_catalogue() -> dict:
@@ -315,11 +327,11 @@ def fetch_ps5upload_catalogue() -> dict:
 
 
 # ─── Item builder ────────────────────────────────────────────────────
-def build_item(repo_url: str, override: dict, enrich: dict) -> dict | None:
-    """Fetch release, pick asset, emit schema item. Returns item with `_canon` key."""
+def build_item(repo_url: str, override: dict, asset_hint: str) -> tuple[dict, str] | None:
+    """Fetch release, pick asset, emit schema item. Returns (item, canon_url) or None."""
     if not parse_repo_url(repo_url):
         return None
-    asset_pattern = override.get("asset_pattern") or enrich.get("asset_name_hint") or ""
+    asset_pattern = override.get("asset_pattern") or asset_hint or ""
 
     print(f"Checking {repo_url}...")
     release = get_latest_release(repo_url)
@@ -332,13 +344,13 @@ def build_item(repo_url: str, override: dict, enrich: dict) -> dict | None:
         print(f"  no assets in release {release.get('tag_name')}, skipping")
         return None
 
-    selected = pick_asset(assets, asset_pattern)
+    selected = pick_asset(assets, asset_pattern, repo_url)
     if not selected:
-        print(f"  no suitable asset, skipping")
+        print("  no suitable asset, skipping")
         return None
 
-    display_name = override.get("display_name") or enrich.get("display_name") or repo_url.rstrip("/").split("/")[-1]
-    description = override.get("description") or enrich.get("description") or ""
+    display_name = override.get("display_name") or repo_url.rstrip("/").split("/")[-1]
+    description = override.get("description") or ""
     category = derive_category(display_name, description)
 
     canon = repo_url_from_release(release) or normalize_repo_url(repo_url)
@@ -353,10 +365,9 @@ def build_item(repo_url: str, override: dict, enrich: dict) -> dict | None:
         "last_update": format_last_update(release.get("published_at") or ""),
         # Source = repo root URL, straight from release.html_url (no concat).
         "source": canon,
-        "_canon": canon,
     }
     print(f"  → {selected['name']} @ {release.get('tag_name')} ({category})")
-    return item
+    return item, canon
 
 
 # ─── README ──────────────────────────────────────────────────────────
@@ -415,11 +426,14 @@ def main() -> None:
 
     final_items = []
     canon_seen = set()
+    n_excluded = 0
+    n_deduped = 0
     skipped = []
 
     for key in all_keys:
         if overrides.get(key, {}).get("exclude"):
             print(f"Excluded by sources.json: {key}")
+            n_excluded += 1
             continue
 
         src_override = overrides.get(key, {})
@@ -434,7 +448,10 @@ def main() -> None:
         if not repo_url:
             continue
 
-        # Merged override with priority: sources.json > ps5upload > itsPLK
+        # Merged override with priority: sources.json > ps5upload > itsPLK.
+        # `display_name`/`description`/`asset_pattern` come from this merge;
+        # `asset_hint` (ps5upload's asset_name_hint) is threaded separately
+        # because itsPLK/sources.json use `asset_pattern`, not `asset_name_hint`.
         override = {}
         for field in ("display_name", "description", "asset_pattern"):
             for src_data in (src_override, psu, disc):
@@ -443,14 +460,15 @@ def main() -> None:
                     override[field] = val
                     break
 
-        item = build_item(repo_url, override, psu)
-        if not item:
+        result = build_item(repo_url, override, psu.get("asset_name_hint") or "")
+        if not result:
             skipped.append(repo_url)
             continue
 
-        canon = item.pop("_canon")
+        item, canon = result
         if canon in canon_seen:
             print(f"  dedup: {repo_url} folds into {canon}, already listed")
+            n_deduped += 1
             continue
         canon_seen.add(canon)
         final_items.append(item)
@@ -460,7 +478,10 @@ def main() -> None:
     document = {"name": CATALOGUE_NAME, "payloads": final_items}
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         json.dump(document, f, indent=2, ensure_ascii=False)
-    print(f"\nWrote {OUTPUT_FILE} ({len(final_items)} payloads, {len(skipped)} skipped)")
+    print(
+        f"\nWrote {OUTPUT_FILE}: {len(final_items)} listed, "
+        f"{n_excluded} excluded, {n_deduped} deduped, {len(skipped)} skipped"
+    )
     if skipped:
         print(f"Skipped: {', '.join(skipped)}")
 
