@@ -362,9 +362,12 @@ def update_readme(payloads: list[dict]) -> None:
     ]
     for p in payloads:
         description = (p.get("description") or "No description provided.").replace("|", "\\|")
+        source_url = p.get("source", "")
+        m = re.search(r"https?://[^/]+/([^/]+)/([^/]+)/releases", source_url)
+        source_label = f"{m.group(1)}/{m.group(2)}" if m else "Source"
         rows.append(
             f"| **{p.get('name','')}** | `{p.get('version','')}` | {p.get('category','')} | "
-            f"{description} | `{p.get('last_update','')}` | [Source]({p.get('source','')}) |"
+            f"{description} | `{p.get('last_update','')}` | [{source_label}]({source_url}) |"
         )
     table = "\n".join(rows)
     start, end = "<!-- PAYLOADS_START -->", "<!-- PAYLOADS_END -->"
