@@ -26,7 +26,21 @@ import json
 import re
 import subprocess
 import urllib.request
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
+
+CST = timezone(timedelta(hours=8))  # UTC+8 / 东八区
+
+
+def format_last_update(iso_str: str) -> str:
+    """Convert ISO 8601 UTC (e.g. 2026-04-30T16:34:19Z) to 'YYYY-MM-DD HH:MM:SS UTC+8'."""
+    if not iso_str:
+        return ""
+    try:
+        dt = datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
+        return dt.astimezone(CST).strftime("%Y-%m-%d %H:%M:%S UTC+8")
+    except Exception:
+        return iso_str
 
 SOURCES_FILE = "sources.json"
 OUTPUT_FILE = "payloads.json"
@@ -356,7 +370,7 @@ def build_item(host: str, owner: str, repo: str, override: dict, enrich: dict) -
         "version": release.get("tag_name", ""),
         "category": category,
         "checksum": checksum,
-        "last_update": release.get("published_at") or "",
+        "last_update": format_last_update(release.get("published_at") or ""),
         "source": f"https://{canon[0]}/{canon[1]}/{canon[2]}/releases",
         "_canon": canon,
     }
