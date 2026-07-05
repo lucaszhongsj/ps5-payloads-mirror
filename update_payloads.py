@@ -173,6 +173,7 @@ CATEGORY_RULES = [
     (r"\bhttp\b|telnet|\bdns\b|klog", "Networking"),  # `web` dropped: too generic (collides with "web-based dashboard")
     (r"save", "Save Manager"),
     (r"debug|gdb", "Debugger"),
+    (r"dump", "Dumper"),
     (r"linux|loader|launch|homebrew|mount|backup|pkg", "Launcher"),
     (r"cheat", "Misc"),
     (r"controller|input|ghostpad|virtual pad", "Misc"),

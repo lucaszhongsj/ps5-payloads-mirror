@@ -20,12 +20,6 @@
     "exclude": false
   },
   {
-    "url": "https://github.com/EchoStretch/kstuff-toggle",
-    "display_name": "kstuff-toggle",
-    "description": "Boost homebrew game performance on your PS5 by disabling Kstuff after launching the game. Ships as a zip; extract kstuff-toggle-3.elf after download.",
-    "exclude": false
-  },
-  {
     "url": "https://github.com/drakmor/ShadowMountPlus",
     "display_name": "ShadowMount+",
     "description": "Fully automated background 'Auto-Mounter' payload for jailbroken PS5. Watches scan folders for game folders and .ffpkg/.exfat/.ffpfs/.ffpfsc images, auto-mounts them, stages sce_sys + appmeta + trophy data, and registers them on the home screen.",
