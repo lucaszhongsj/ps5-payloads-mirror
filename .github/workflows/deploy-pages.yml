@@ -24,12 +24,51 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Stage Pages content
+      - name: Render README to HTML
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p _site
+          # Use GitHub's markdown API so rendering matches the repo README 1:1.
+          PAYLOAD=$(jq -Rs '{text: ., mode: "gfm"}' < README.md)
+          BODY=$(curl -sS -X POST https://api.github.com/markdown \
+            -H "Authorization: bearer $GH_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD")
+          # Inline the JSON payload to python via stdin to avoid shell-escape pain.
+          printf '%s' "$BODY" > _site/_body.html
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          body = Path("_site/_body.html").read_text(encoding="utf-8")
+          # Extract the first H1 as page title.
+          m = re.search(r"<h1[^>]*>(.*?)</h1>", body, re.DOTALL)
+          title = re.sub(r"<[^>]+>", "", m.group(1)).strip() if m else "ps5-payloads-atlas"
+          page = f"""<!DOCTYPE html>
+          <html lang="en">
+          <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>{title}</title>
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5/github-markdown-light.css">
+          <style>
+            body {{ box-sizing: border-box; max-width: 980px; margin: 0 auto; padding: 32px 16px; }}
+            @media (max-width: 767px) {{ body {{ padding: 16px; }} }}
+          </style>
+          </head>
+          <body class="markdown-body">
+          {body}
+          </body>
+          </html>
+          """
+          Path("_site/index.html").write_text(page, encoding="utf-8")
+          Path("_site/_body.html").unlink()
+          PY
+
+      - name: Stage static files
+        run: |
           cp payloads.json _site/
           cp sources.json _site/
-          cp README.md _site/
           cp LICENSE _site/
 
       - name: Setup Pages
