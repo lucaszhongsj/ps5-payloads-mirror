@@ -145,17 +145,6 @@
       "source": "https://github.com/echostretch/kstuff-lite"
     },
     {
-      "name": "kstuff-toggle",
-      "filename": "kstuff-toggle.zip",
-      "url": "https://github.com/EchoStretch/kstuff-toggle/releases/download/0.6/kstuff-toggle.zip",
-      "description": "Boost homebrew game performance on your PS5 by disabling Kstuff after launching the game. Ships as a zip; extract kstuff-toggle-3.elf after download.",
-      "version": "0.6",
-      "category": "Kernel",
-      "checksum": "ec6b227b233810e2e9cea2895820b74b5185732d2c2153f3508a03bc68a7f14d",
-      "last_update": "2026-05-07 11:02:36 UTC+8",
-      "source": "https://github.com/echostretch/kstuff-toggle"
-    },
-    {
       "name": "Lapy JB Daemon",
       "filename": "lapy_jb_daemon-v1.2.elf",
       "url": "https://github.com/itsPLK/PS5-Lapy-JB-Daemon/releases/download/v1.2/lapy_jb_daemon-v1.2.elf",

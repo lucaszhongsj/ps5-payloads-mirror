@@ -130,19 +130,14 @@ def repo_url_from_release(release: dict) -> str:
 
 
 # ─── Asset selection ─────────────────────────────────────────────────
-def pick_asset(assets: list, asset_pattern: str, has_extract: bool) -> dict | None:
+def pick_asset(assets: list, asset_pattern: str) -> dict | None:
     """Select the canonical payload asset by explicit priority (no magic numbers).
 
-    Priority: keep only .elf/.bin (or .zip when extracting) → if asset_pattern
-    given, narrow to matches (fallback to unfiltered if none match) → prefer
-    .elf over .bin, non-ps4 over ps4, shorter filename over longer.
+    Keep only .elf/.bin → if asset_pattern given, narrow to matches (fallback
+    to unfiltered if none match) → prefer .elf over .bin, non-ps4 over ps4,
+    shorter filename over longer.
     """
-    def is_candidate(name: str) -> bool:
-        if has_extract and name.endswith(".zip"):
-            return True
-        return name.endswith((".elf", ".bin"))
-
-    candidates = [a for a in assets if is_candidate(a["name"])]
+    candidates = [a for a in assets if a["name"].endswith((".elf", ".bin"))]
     if not candidates:
         return None
     if asset_pattern:
@@ -152,7 +147,7 @@ def pick_asset(assets: list, asset_pattern: str, has_extract: bool) -> dict | No
     return min(
         candidates,
         key=lambda a: (
-            0 if a["name"].endswith(".elf") else 1,   # .elf preferred over .bin/.zip
+            0 if a["name"].endswith(".elf") else 1,   # .elf preferred over .bin
             "ps4" in a["name"].lower(),                # avoid ps4 builds
             len(a["name"]),                            # shorter canonical name preferred
         ),
@@ -208,7 +203,6 @@ def fetch_itsplk_discovery() -> dict:
             "display_name": p.get("name"),
             "description": p.get("description") or "",
             "asset_pattern": p.get("asset_pattern") or "",
-            "extract_file": p.get("extract_file"),
         }
     print(f"itsPLK discovery loaded: {len(discovered)} repos")
     return discovered
@@ -326,7 +320,6 @@ def build_item(repo_url: str, override: dict, enrich: dict) -> dict | None:
     if not parse_repo_url(repo_url):
         return None
     asset_pattern = override.get("asset_pattern") or enrich.get("asset_name_hint") or ""
-    has_extract = bool(override.get("extract_file"))
 
     print(f"Checking {repo_url}...")
     release = get_latest_release(repo_url)
@@ -339,7 +332,7 @@ def build_item(repo_url: str, override: dict, enrich: dict) -> dict | None:
         print(f"  no assets in release {release.get('tag_name')}, skipping")
         return None
 
-    selected = pick_asset(assets, asset_pattern, has_extract)
+    selected = pick_asset(assets, asset_pattern)
     if not selected:
         print(f"  no suitable asset, skipping")
         return None
@@ -443,7 +436,7 @@ def main() -> None:
 
         # Merged override with priority: sources.json > ps5upload > itsPLK
         override = {}
-        for field in ("display_name", "description", "asset_pattern", "extract_file"):
+        for field in ("display_name", "description", "asset_pattern"):
             for src_data in (src_override, psu, disc):
                 val = src_data.get(field)
                 if val:
