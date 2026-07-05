@@ -39,7 +39,7 @@ PS5UPLOAD_CATALOGUE_URL = (
     "https://raw.githubusercontent.com/phantomptr/ps5upload/main/"
     "client/src-tauri/src/commands/payloads.rs"
 )
-CATALOGUE_NAME = "PS5 Payload Catalogue"
+CATALOGUE_NAME = "lucaszhongsj/ps5-payloads-atlas"
 CST = timezone(timedelta(hours=8))  # UTC+8 / 东八区
 
 
