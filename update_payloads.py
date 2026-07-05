@@ -122,18 +122,11 @@ def get_latest_release(repo_url: str) -> dict | None:
     return releases[0] if releases else None
 
 
-def canonical_repo_url(release: dict, fallback: str) -> str:
-    """Use the API's release.html_url to derive the canonical repo URL.
-
-    `release.html_url` looks like
-    `https://github.com/<owner>/<repo>/releases/tag/<tag>` — strip everything
-    from `/releases` onward. Falls back to the input URL if absent.
-    """
+def repo_url_from_release(release: dict) -> str:
+    """`https://github.com/o/r/releases/tag/v1` → `https://github.com/o/r` (lowercased)."""
     html_url = release.get("html_url") or ""
     idx = html_url.find("/releases")
-    if idx > 0:
-        return html_url[:idx].lower()
-    return normalize_repo_url(fallback)
+    return html_url[:idx].lower() if idx > 0 else ""
 
 
 # ─── Asset selection ─────────────────────────────────────────────────
@@ -360,6 +353,7 @@ def build_item(repo_url: str, override: dict, enrich: dict) -> dict | None:
     description = override.get("description") or enrich.get("description") or ""
     category = derive_category(display_name, description)
 
+    canon = repo_url_from_release(release) or normalize_repo_url(repo_url)
     item = {
         "name": display_name,
         "filename": selected["name"],
@@ -369,10 +363,9 @@ def build_item(repo_url: str, override: dict, enrich: dict) -> dict | None:
         "category": category,
         "checksum": get_checksum(selected, host),
         "last_update": format_last_update(release.get("published_at") or ""),
-        # Source = repo URL (root), derived from release.html_url when available
-        # so redirect aliases (LightningMods/etaHEN → etaHEN/etaHEN) collapse.
-        "source": canonical_repo_url(release, repo_url) + "/releases",
-        "_canon": canonical_repo_url(release, repo_url),
+        # Source = repo root URL, straight from release.html_url (no concat).
+        "source": canon,
+        "_canon": canon,
     }
     print(f"  → {selected['name']} @ {release.get('tag_name')} ({category})")
     return item
@@ -387,7 +380,7 @@ def update_readme(payloads: list[dict]) -> None:
     for p in payloads:
         description = (p.get("description") or "No description provided.").replace("|", "\\|")
         source_url = p.get("source", "")
-        m = re.search(r"https?://[^/]+/([^/]+)/([^/]+)/releases", source_url)
+        m = re.search(r"https?://[^/]+/([^/]+)/([^/]+)", source_url)
         source_label = f"{m.group(1)}/{m.group(2)}" if m else "Source"
         rows.append(
             f"| **{p.get('name','')}** | `{p.get('version','')}` | {p.get('category','')} | "

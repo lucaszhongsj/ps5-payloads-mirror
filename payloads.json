@@ -10,7 +10,7 @@
       "category": "Misc",
       "checksum": "d74e4cd119b2bb1fd423f2f5b1c9a7f096b3e588c753af1ab48b983d56216a52",
       "last_update": "2026-05-01 00:34:19 UTC+8",
-      "source": "https://github.com/bestpig/backpork/releases"
+      "source": "https://github.com/bestpig/backpork"
     },
     {
       "name": "CheatRunner",
@@ -21,7 +21,7 @@
       "category": "Misc",
       "checksum": "5ffe8ed97fd6021cfad2b44a1be68c1b9f6e84c1e3a8d925f9e3b975235aa99f",
       "last_update": "2026-06-19 04:21:41 UTC+8",
-      "source": "https://github.com/notmaj0r/cheatrunner/releases"
+      "source": "https://github.com/notmaj0r/cheatrunner"
     },
     {
       "name": "elfldr",
@@ -32,7 +32,7 @@
       "category": "Launcher",
       "checksum": "092d16ee0ede0c494947efd38d1a17bbd7cc4b022d3858ea898833c188c703e8",
       "last_update": "2026-05-13 02:51:52 UTC+8",
-      "source": "https://github.com/ps5-payload-dev/elfldr/releases"
+      "source": "https://github.com/ps5-payload-dev/elfldr"
     },
     {
       "name": "ezremote-DPI",
@@ -43,7 +43,7 @@
       "category": "Launcher",
       "checksum": "54a57a7a68ee7d44064438d9a63fafc08ecbaf033dcbdee28f8f3119914ea109",
       "last_update": "2025-07-02 03:42:24 UTC+8",
-      "source": "https://github.com/cy33hc/ps5-ezremote-dpi/releases"
+      "source": "https://github.com/cy33hc/ps5-ezremote-dpi"
     },
     {
       "name": "ftpsrv",
@@ -54,7 +54,7 @@
       "category": "File Transfer",
       "checksum": "8f305a959fb9d70fd8d52ba88409e0d5a1632e83d4ecdd38646a0a33e54089da",
       "last_update": "2026-05-13 02:36:49 UTC+8",
-      "source": "https://github.com/ps5-payload-dev/ftpsrv/releases"
+      "source": "https://github.com/ps5-payload-dev/ftpsrv"
     },
     {
       "name": "ftpsrv (drakmor)",
@@ -65,7 +65,7 @@
       "category": "Misc",
       "checksum": "913a443af847b6861ec11748e2640f62d1fc1027076f576aa0ddccab8507311f",
       "last_update": "2026-04-08 10:17:12 UTC+8",
-      "source": "https://github.com/drakmor/ftpsrv/releases"
+      "source": "https://github.com/drakmor/ftpsrv"
     },
     {
       "name": "Garlic SaveMgr",
@@ -76,7 +76,7 @@
       "category": "Save Manager",
       "checksum": "",
       "last_update": "2026-06-11 19:33:01 UTC+8",
-      "source": "https://git.etawen.dev/earthonion/garlic-savemgr/releases"
+      "source": "https://git.etawen.dev/earthonion/garlic-savemgr"
     },
     {
       "name": "Garlic Worker",
@@ -87,7 +87,7 @@
       "category": "Save Manager",
       "checksum": "",
       "last_update": "2026-07-04 21:24:04 UTC+8",
-      "source": "https://git.etawen.dev/earthonion/garlic-worker/releases"
+      "source": "https://git.etawen.dev/earthonion/garlic-worker"
     },
     {
       "name": "Ghostpad",
@@ -98,7 +98,7 @@
       "category": "Misc",
       "checksum": "94d43a8db7ec9df6e18f0a0da25aac0f60e1a0b14d35bfff261f6f5cdeabdba1",
       "last_update": "2026-05-31 23:27:41 UTC+8",
-      "source": "https://github.com/stonedmodder/ghostpad/releases"
+      "source": "https://github.com/stonedmodder/ghostpad"
     },
     {
       "name": "klogsrv",
@@ -109,7 +109,7 @@
       "category": "Launcher",
       "checksum": "f6eb1b415ecf3340b89a56a0cb04ba5c714430085851ada13a98012b63a5a4cf",
       "last_update": "2026-05-13 02:44:28 UTC+8",
-      "source": "https://github.com/ps5-payload-dev/klogsrv/releases"
+      "source": "https://github.com/ps5-payload-dev/klogsrv"
     },
     {
       "name": "kstuff",
@@ -120,7 +120,7 @@
       "category": "Kernel",
       "checksum": "f1c1f4b2b6395644af04cbe9828aba58586acf7aacb9e01113cac92ce16e3569",
       "last_update": "2026-01-04 23:55:09 UTC+8",
-      "source": "https://github.com/echostretch/kstuff/releases"
+      "source": "https://github.com/echostretch/kstuff"
     },
     {
       "name": "kstuff-lite (drakmor — fpkg-optimized)",
@@ -131,7 +131,7 @@
       "category": "Kernel",
       "checksum": "9c1b242eaed3704ef18be45d001a2c4ebf2d9222cfe3cbb0f0c3db33309abac9",
       "last_update": "2026-05-31 21:18:16 UTC+8",
-      "source": "https://github.com/drakmor/kstuff-lite/releases"
+      "source": "https://github.com/drakmor/kstuff-lite"
     },
     {
       "name": "kstuff-lite (EchoStretch)",
@@ -142,7 +142,7 @@
       "category": "Kernel",
       "checksum": "ec5212794dc6e44ee8e70fd0549abec6d3dac8c3e03ddbeafd9f869ffe97d4e8",
       "last_update": "2026-07-04 09:30:05 UTC+8",
-      "source": "https://github.com/echostretch/kstuff-lite/releases"
+      "source": "https://github.com/echostretch/kstuff-lite"
     },
     {
       "name": "kstuff-toggle",
@@ -153,7 +153,7 @@
       "category": "Kernel",
       "checksum": "ec6b227b233810e2e9cea2895820b74b5185732d2c2153f3508a03bc68a7f14d",
       "last_update": "2026-05-07 11:02:36 UTC+8",
-      "source": "https://github.com/echostretch/kstuff-toggle/releases"
+      "source": "https://github.com/echostretch/kstuff-toggle"
     },
     {
       "name": "Lapy JB Daemon",
@@ -164,7 +164,7 @@
       "category": "Kernel",
       "checksum": "13559b858fc33cc7fa3dc89e10dccf139070d99ee5d378dd75c969293700799e",
       "last_update": "2026-06-02 02:26:02 UTC+8",
-      "source": "https://github.com/itsplk/ps5-lapy-jb-daemon/releases"
+      "source": "https://github.com/itsplk/ps5-lapy-jb-daemon"
     },
     {
       "name": "nanoDNS",
@@ -175,7 +175,7 @@
       "category": "Networking",
       "checksum": "ce1c8b31036ab948da65b362a4b6f249ffca8a555fc5bc4b051ec65d041bc944",
       "last_update": "2026-06-03 17:37:48 UTC+8",
-      "source": "https://github.com/drakmor/nanodns/releases"
+      "source": "https://github.com/drakmor/nanodns"
     },
     {
       "name": "NP Fake Sign-in",
@@ -186,7 +186,7 @@
       "category": "Misc",
       "checksum": "",
       "last_update": "2026-05-15 19:41:36 UTC+8",
-      "source": "https://git.etawen.dev/earthonion/np-fake-signin/releases"
+      "source": "https://git.etawen.dev/earthonion/np-fake-signin"
     },
     {
       "name": "pldmgr",
@@ -197,7 +197,7 @@
       "category": "Networking",
       "checksum": "518740adbacccb9094fadb07dd424c53ee290f38306449ccc9d6957fdf813c0b",
       "last_update": "2026-06-07 07:26:20 UTC+8",
-      "source": "https://github.com/itsplk/ps5-payload-manager/releases"
+      "source": "https://github.com/itsplk/ps5-payload-manager"
     },
     {
       "name": "ps5-app-dumper",
@@ -208,7 +208,7 @@
       "category": "Launcher",
       "checksum": "95382a9e37987d8eb931cbe5db618e77d293099ef4314e3288d9899bd5ac5c00",
       "last_update": "2026-05-04 05:51:19 UTC+8",
-      "source": "https://github.com/echostretch/ps5-app-dumper/releases"
+      "source": "https://github.com/echostretch/ps5-app-dumper"
     },
     {
       "name": "ps5-linux-loader",
@@ -219,7 +219,7 @@
       "category": "Kernel",
       "checksum": "0723b5d5e09120861023e91780d9ec345a3aa2f32c8a17fdfb3a60a9e934e8a5",
       "last_update": "2026-07-01 17:21:23 UTC+8",
-      "source": "https://github.com/ps5-linux/ps5-linux-loader/releases"
+      "source": "https://github.com/ps5-linux/ps5-linux-loader"
     },
     {
       "name": "ps5debug-NG",
@@ -230,7 +230,7 @@
       "category": "Debugger",
       "checksum": "8f75fb90b45d7cc4d59147e3323577d7264cf572c78a27f76722202f492ad16a",
       "last_update": "2026-06-21 15:37:35 UTC+8",
-      "source": "https://github.com/opensourcerer-dev/ps5debug-ng/releases"
+      "source": "https://github.com/opensourcerer-dev/ps5debug-ng"
     },
     {
       "name": "ShadowMount+",
@@ -241,7 +241,7 @@
       "category": "Launcher",
       "checksum": "11f27b426562b4b500a2b71d0930c52fc882af4b4ea076d6d316e402a7d457ce",
       "last_update": "2026-06-28 21:59:58 UTC+8",
-      "source": "https://github.com/drakmor/shadowmountplus/releases"
+      "source": "https://github.com/drakmor/shadowmountplus"
     },
     {
       "name": "shsrv",
@@ -252,7 +252,7 @@
       "category": "Networking",
       "checksum": "797827b50a93dbf327abdca45063d76ea24b17e561d927f397a0b73cadb2e2bd",
       "last_update": "2026-06-29 00:21:35 UTC+8",
-      "source": "https://github.com/ps5-payload-dev/shsrv/releases"
+      "source": "https://github.com/ps5-payload-dev/shsrv"
     },
     {
       "name": "websrv",
@@ -263,7 +263,7 @@
       "category": "Networking",
       "checksum": "4676a40ac4c7ca1adeb04980efa48dd33a8961446b42e6a12abfcbe96090c8ac",
       "last_update": "2026-06-28 23:54:38 UTC+8",
-      "source": "https://github.com/ps5-payload-dev/websrv/releases"
+      "source": "https://github.com/ps5-payload-dev/websrv"
     },
     {
       "name": "zftpd",
@@ -274,7 +274,7 @@
       "category": "File Transfer",
       "checksum": "9340aa91f8f1eeb619473d716e0b6ab7af1c6fbb3ad815648520872ad6c86ccf",
       "last_update": "2026-06-15 01:25:58 UTC+8",
-      "source": "https://github.com/seregonwar/zftpd/releases"
+      "source": "https://github.com/seregonwar/zftpd"
     }
   ]
 }
