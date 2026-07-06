@@ -202,12 +202,12 @@
     {
       "name": "ps5-linux-loader",
       "filename": "ps5-linux-loader.elf",
-      "url": "https://github.com/ps5-linux/ps5-linux-loader/releases/download/v2.3/ps5-linux-loader.elf",
+      "url": "https://github.com/ps5-linux/ps5-linux-loader/releases/download/v2.4/ps5-linux-loader.elf",
       "description": "Linux payload implementing HV exploits to run a custom bootloader.",
-      "version": "v2.3",
+      "version": "v2.4",
       "category": "Kernel",
-      "checksum": "0723b5d5e09120861023e91780d9ec345a3aa2f32c8a17fdfb3a60a9e934e8a5",
-      "last_update": "2026-07-01 17:21:23 UTC+8",
+      "checksum": "51382795b486f7c5a3681648d457d129088311fc3f9601aeaff78dc72fafcf1d",
+      "last_update": "2026-07-06 16:03:05 UTC+8",
       "source": "https://github.com/ps5-linux/ps5-linux-loader"
     },
     {
