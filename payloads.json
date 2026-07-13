@@ -70,12 +70,12 @@
     {
       "name": "Garlic SaveMgr",
       "filename": "garlic-savemgr.elf",
-      "url": "https://git.etawen.dev/earthonion/garlic-savemgr/releases/download/v1.10/garlic-savemgr.elf",
+      "url": "https://git.etawen.dev/earthonion/garlic-savemgr/releases/download/v1.12/garlic-savemgr.elf",
       "description": "On-console save decrypt/encrypt daemon. Back up saves in plaintext, edit on PC, re-encrypt for the same console. No network.",
-      "version": "v1.10",
+      "version": "v1.12",
       "category": "Save Manager",
       "checksum": "",
-      "last_update": "2026-06-11 19:33:01 UTC+8",
+      "last_update": "2026-07-14 06:57:50 UTC+8",
       "source": "https://git.etawen.dev/earthonion/garlic-savemgr"
     },
     {
